@@ -6,9 +6,10 @@ from em_research_agentic.utils.nodes import plan_node, generation_node, reflecti
 
 class GraphConfig(TypedDict):
     model_name: Literal["anthropic", "openai"]
+    max_results_tavily: int
 
 
-builder = StateGraph(AgentState)
+builder = StateGraph(AgentState, config_schema=GraphConfig)
 builder.add_node("planner", plan_node)
 builder.add_node("generate", generation_node)
 builder.add_node("reflect", reflection_node)

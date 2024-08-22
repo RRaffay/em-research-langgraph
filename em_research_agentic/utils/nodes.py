@@ -28,9 +28,12 @@ def _get_model(model_name: str):
 
 
 def plan_node(state: AgentState, config):
+
+    input_message = f"The topic is:\n<topic>\n{state['task']}\n</topic>\n"
+
     messages = [
         SystemMessage(content=PLAN_PROMPT),
-        HumanMessage(content=state['task'])
+        HumanMessage(content=input_message)
     ]
     model_name = config.get('configurable', {}).get("model_name", "openai")
     model = _get_model(model_name)
@@ -43,13 +46,16 @@ def plan_node(state: AgentState, config):
 def research_plan_node(state: AgentState, config):
     model_name = config.get('configurable', {}).get("model_name", "openai")
     model = _get_model(model_name)
+
     queries = model.with_structured_output(Queries).invoke([
         SystemMessage(content=RESEARCH_PLAN_PROMPT),
         HumanMessage(content=state['task'])
     ])
+
     content = state['content'] or []
+    max_results = config.get('configurable', {}).get('max_results_tavily', 2)
     for q in queries.queries:
-        response = tavily.search(query=q, max_results=2)
+        response = tavily.search(query=q, max_results=max_results)
         for r in response['results']:
             content.append(r['content'])
     return {"content": content}
