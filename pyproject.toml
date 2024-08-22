@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "em_research_agentic"
+version = "0.1.0"
+description = "Emerging Markets News Agentic Research"
+authors = [
+    "RRaffay"
+]
+packages = [
+    { include = "em_research_agentic" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.9.0,<3.13"
+langgraph = "^0.2.0"
+langchain_anthropic = "^0.1.0"
+langchain_core = "^0.2.0"
+langchain_openai = "^0.1.0"
+tavily-python = "^0.3.0"
+langchain_community = "^0.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
