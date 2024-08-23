@@ -29,7 +29,7 @@ def _get_model(model_name: str):
 
 def plan_node(state: AgentState, config):
 
-    input_message = f"The topic is:\n<topic>\n{state['task']}\n</topic>\n"
+    input_message = f"The topic is:\n{state['task']}\n"
 
     messages = [
         SystemMessage(content=PLAN_PROMPT),
