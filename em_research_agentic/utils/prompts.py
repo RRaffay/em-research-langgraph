@@ -84,7 +84,6 @@ Analyze the report thoroughly. Consider the following aspects:
 3. Depth of analysis
 4. Use of supporting evidence
 5. Writing style and clarity
-6. Adherence to any specific requirements mentioned in the rubric
 
 Based on your analysis, generate a detailed critique and set of recommendations for the report. Your feedback should be constructive, specific, and actionable. Include the following elements in your response:
 
@@ -95,7 +94,6 @@ Based on your analysis, generate a detailed critique and set of recommendations 
    a. Suggestions for additional focus areas or topics to explore
    b. Recommendations for adjusting the length or depth of certain sections
    c. Advice on improving the writing style or clarity
-   d. Tips for better adhering to the rubric criteria
 5. Any other relevant feedback or suggestions
 
 Ensure that your feedback is thorough, constructive, and aligned with the expectations. Your goal is to help the report writer understand their current performance and provide clear guidance on how to improve their submission."""

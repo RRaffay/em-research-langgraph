@@ -8,10 +8,20 @@ from typing import List
 from langchain_core.messages import AnyMessage, SystemMessage, HumanMessage, AIMessage, ChatMessage
 from em_research_agentic.utils.prompts import PLAN_PROMPT, RESEARCH_PLAN_PROMPT, WRITER_PROMPT, REFLECTION_PROMPT, RESEARCH_CRITIQUE_PROMPT
 from em_research_agentic.utils.tools import tavily
+from em_research_agentic.utils.article_summarizer import generate_summaries
 
 
 class Queries(BaseModel):
     queries: List[str]
+
+
+class SearchResponse(BaseModel):
+    content: str
+    url: str
+    title: str
+
+    def to_string(self):
+        return f"Article title:{self.title}\n\nArticle Content:\n {self.content}\n\nURL: {self.url}"
 
 
 @lru_cache(maxsize=4)
@@ -53,11 +63,16 @@ def research_plan_node(state: AgentState, config):
     ])
 
     content = state['content'] or []
-    max_results = config.get('configurable', {}).get('max_results_tavily', 2)
+    max_results = config.get('configurable', {}).get('max_results_tavily', 1)
     for q in queries.queries:
         response = tavily.search(query=q, max_results=max_results)
-        for r in response['results']:
-            content.append(r['content'])
+        # TODO: Change this to better handle large articles
+        article_urls = [r['url'] for r in response['results']][:1]
+        summaries = generate_summaries(article_urls)
+        for r, summary in zip(response['results'], summaries):
+            response_obj = SearchResponse(
+                content=summary, url=r['url'], title=r['title'])
+            content.append(response_obj.to_string())
     return {"content": content}
 
 # Node for Writing
@@ -105,14 +120,23 @@ def research_critique_node(state: AgentState, config):
         HumanMessage(content=state['critique'])
     ])
     content = state['content'] or []
+
+    max_results = config.get('configurable', {}).get('max_results_tavily', 1)
+
     for q in queries.queries:
-        response = tavily.search(query=q, max_results=2)
-        for r in response['results']:
-            content.append(r['content'])
+        response = tavily.search(query=q, max_results=max_results)
+        # TODO: Change this to better handle large articles
+        article_urls = [r['url'] for r in response['results']][:1]
+        summaries = generate_summaries(article_urls)
+        for r, summary in zip(response['results'], summaries):
+            response_obj = SearchResponse(
+                content=summary, url=r['url'], title=r['title'])
+            content.append(response_obj.to_string())
     return {"content": content}
 
-
 # Edge
+
+
 def should_continue(state):
     if state["revision_number"] > state["max_revisions"]:
         return END
